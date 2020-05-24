@@ -6,29 +6,27 @@
 Summary:	A class for types that can be converted to a hash value
 Summary(pl.UTF-8):	Klasa dla typów, które można przekształcić do wartości hasza
 Name:		ghc-%{pkgname}
-Version:	1.2.1.0
+Version:	1.3.0.0
 Release:	1
 License:	BSD
 Group:		Development/Languages
 #Source0Download: http://hackage.haskell.org/package/hashable
 Source0:	http://hackage.haskell.org/package/%{pkgname}-%{version}/%{pkgname}-%{version}.tar.gz
-# Source0-md5:	74f7cadb836e63f4d4b1a24be401228d
+# Source0-md5:	72b9550b7f56dae4cfdd45ff5d1746a6
+Patch0:		ghc-8.10.patch
 URL:		http://hackage.haskell.org/package/hashable
 BuildRequires:	ghc >= 6.12.3
 BuildRequires:	ghc-base >= 4.0
-BuildRequires:	ghc-base < 5.0
 BuildRequires:	ghc-bytestring >= 0.9
 %if %{with prof}
 BuildRequires:	ghc-prof >= 6.12.3
 BuildRequires:	ghc-base-prof >= 4.0
-BuildRequires:	ghc-base-prof < 5.0
 BuildRequires:	ghc-bytestring-prof >= 0.9
 %endif
 BuildRequires:	rpmbuild(macros) >= 1.608
 Requires(post,postun):	/usr/bin/ghc-pkg
 %requires_eq	ghc
 Requires:	ghc-base >= 4.0
-Requires:	ghc-base < 5.0
 Requires:	ghc-bytestring >= 0.9
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -56,7 +54,6 @@ Summary(pl.UTF-8):	Biblioteka profilująca %{pkgname} dla GHC
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	ghc-base-prof >= 4.0
-Requires:	ghc-base-prof < 5.0
 Requires:	ghc-bytestring-prof >= 0.9
 
 %description prof
@@ -80,6 +77,7 @@ Dokumentacja w formacie HTML dla pakietu ghc %{pkgname}.
 
 %prep
 %setup -q -n %{pkgname}-%{version}
+%patch0 -p1
 
 %build
 runhaskell Setup.hs configure -v2 \
@@ -117,22 +115,29 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc CHANGES LICENSE README.md
+%doc CHANGES.md LICENSE README.md
 %{_libdir}/%{ghcdir}/package.conf.d/%{pkgname}.conf
 %dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}
-%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/HShashable-%{version}.o
-%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHShashable-%{version}.a
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHShashable-%{version}-*.so
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHShashable-%{version}-*.a
+%exclude %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHShashable-%{version}-*_p.a
 %dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data
 %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable.hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable.dyn_hi
 %dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable
 %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable/*.hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable/*.dyn_hi
+%dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable/Generic
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable/Generic/*.hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable/Generic/*.dyn_hi
 
 %if %{with prof}
 %files prof
 %defattr(644,root,root,755)
-%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHShashable-%{version}_p.a
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHShashable-%{version}-*_p.a
 %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable.p_hi
 %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable/*.p_hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Hashable/Generic/*.p_hi
 %endif
 
 %files doc

@@ -7,7 +7,7 @@ Summary:	A class for types that can be converted to a hash value
 Summary(pl.UTF-8):	Klasa dla typów, które można przekształcić do wartości hasza
 Name:		ghc-%{pkgname}
 Version:	1.3.0.0
-Release:	1
+Release:	2
 License:	BSD
 Group:		Development/Languages
 #Source0Download: http://hackage.haskell.org/package/hashable
